@@ -17,20 +17,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-            node-version: '22'
+            node-version: '>=22.12'
             cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build project
         run: npm run build
-
-      - name: Check for build errors and files
-        run: |
-          ls -R ./dist
-          grep -q "</div>" ./dist/index.html || echo "WARNING: Closing div tag not found!"
-          grep -q "</body>" ./dist/index.html || echo "WARNING: Closing body tag not found!"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -38,8 +32,7 @@ jobs:
           personal_token: ${{ secrets.PUBLIC_PAGES_TOKEN }}
           external_repository: ${{ secrets.PUBLIC_PAGES_REPO }}
           publish_dir: ./dist
-          publish_branch: main 
+          publish_branch: ${{ secrets.PUBLIC_PAGES_BRANCH || 'main' }}
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: 'deploy: update build with fixes'
-          force_orphan: true
+          commit_message: 'deploy: update build'
